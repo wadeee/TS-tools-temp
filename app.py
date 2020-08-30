@@ -3,9 +3,9 @@ import shutil
 import zipfile
 
 import pythoncom
+import win32com
 from fitz import fitz
 from flask import Flask, render_template, request, send_file
-from win32com.client import Dispatch
 
 app = Flask(__name__)
 
@@ -36,7 +36,7 @@ def a():
     request.files.get('originFileA').save(docpathname)
 
     pythoncom.CoInitialize()
-    word = Dispatch('Word.Application')
+    word = win32com.client.Dispatch('Word.Application')
     worddoc = word.Documents.Open(docpathname, ReadOnly=1)
     worddoc.SaveAs(pdfpathname, FileFormat=17)
     worddoc.Close()
