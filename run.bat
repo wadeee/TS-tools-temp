@@ -1,0 +1,1 @@
+start /b python ./server.py
