@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>泰盛建筑-WORD to IMAGE</title>
+    <link rel="icon" href="/static/favicon.ico" >
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font@3.x/css/materialdesignicons.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
@@ -41,7 +42,7 @@
                                     ref="formA"
                                     @submit.prevent="submitA"
                             >
-                                <v-file-input chips label="PDF文件" v-model="originFileA"></v-file-input>
+                                <v-file-input chips label="WORD文件" v-model="originFileA"></v-file-input>
                                 <v-btn
                                         text
                                         type="submit"
