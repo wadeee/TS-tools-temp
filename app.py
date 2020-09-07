@@ -106,7 +106,7 @@ def b():
         clip = fitz.Rect(rect.tl, rect.br)
         pix = page.getPixmap(matrix=mat, alpha=False, clip=clip)
 
-        pix.writePNG(os.path.join(imagepath, '{}.png'.format(pg)))
+        pix.writePNG(os.path.join(imagepath, '{}.jpg'.format(pg)))
     filedoc.close()
 
     zipdoc = zipfile.ZipFile(zippathname, 'w', zipfile.ZIP_DEFLATED)
