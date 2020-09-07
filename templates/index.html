@@ -35,7 +35,7 @@
                                 src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
                         ></v-img>
 
-                        <v-card-title>WORD转图片</v-card-title>
+                        <v-card-title>WORD转图片(去页眉页脚)</v-card-title>
 
                         <v-card-text>
                             <v-form
@@ -43,6 +43,38 @@
                                     @submit.prevent="submitA"
                             >
                                 <v-file-input chips label="WORD文件" v-model="originFileA"></v-file-input>
+                                <v-btn
+                                        text
+                                        type="submit"
+                                >
+                                    submit
+                                </v-btn>
+                            </v-form>
+                        </v-card-text>
+                    </v-card>
+                </v-col>
+                <v-col
+                        xs="12"
+                        sm="12"
+                        md="6"
+                        lg="4"
+                >
+                    <v-card
+                            class="mx-auto my-12"
+                    >
+                        <v-img
+                                height="250"
+                                src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
+                        ></v-img>
+
+                        <v-card-title>PDF转图片</v-card-title>
+
+                        <v-card-text>
+                            <v-form
+                                    ref="formB"
+                                    @submit.prevent="submitB"
+                            >
+                                <v-file-input chips label="PDF文件" v-model="originFileB"></v-file-input>
                                 <v-btn
                                         text
                                         type="submit"
@@ -80,12 +112,19 @@
         }),
         data: {
             originFileA: null,
+            originFileB: null,
         },
         methods: {
             submitA() {
                 let formData = new FormData()
                 formData.append("originFileA", this.originFileA)
                 axios.post('/a', formData, {responseType: 'blob'})
+                    .then(this.downloadFile)
+            },
+            submitB() {
+                let formData = new FormData()
+                formData.append("originFileB", this.originFileB)
+                axios.post('/b', formData, {responseType: 'blob'})
                     .then(this.downloadFile)
             },
             downloadFile(res) {
