@@ -85,6 +85,70 @@
                         </v-card-text>
                     </v-card>
                 </v-col>
+{#                <v-col#}
+{#                        xs="12"#}
+{#                        sm="12"#}
+{#                        md="6"#}
+{#                        lg="4"#}
+{#                >#}
+{#                    <v-card#}
+{#                            class="mx-auto my-12"#}
+{#                    >#}
+{#                        <v-img#}
+{#                                height="250"#}
+{#                                src="https://picsum.photos/510/300?random"#}
+{#                        ></v-img>#}
+{##}
+{#                        <v-card-title>图片去白边</v-card-title>#}
+{##}
+{#                        <v-card-text>#}
+{#                            <v-form#}
+{#                                    ref="formC"#}
+{#                                    @submit.prevent="submitC"#}
+{#                            >#}
+{#                                <v-file-input  small-chips multiple label="图片" v-model="originFilesC"></v-file-input>#}
+{#                                <v-btn#}
+{#                                        text#}
+{#                                        type="submit"#}
+{#                                >#}
+{#                                    submit#}
+{#                                </v-btn>#}
+{#                            </v-form>#}
+{#                        </v-card-text>#}
+{#                    </v-card>#}
+{#                </v-col>#}
+                <v-col
+                        xs="12"
+                        sm="12"
+                        md="6"
+                        lg="4"
+                >
+                    <v-card
+                            class="mx-auto my-12"
+                    >
+                        <v-img
+                                height="250"
+                                src="https://i.picsum.photos/id/829/510/300.jpg?hmac=ebcYmT49aRby0TGawoO46uYe3syu41pkXw2khFRU4fk"
+                        ></v-img>
+
+                        <v-card-title>图片垂直拼接</v-card-title>
+
+                        <v-card-text>
+                            <v-form
+                                    ref="formD"
+                                    @submit.prevent="submitD"
+                            >
+                                <v-file-input  small-chips multiple label="图片" v-model="originFilesD"></v-file-input>
+                                <v-btn
+                                        text
+                                        type="submit"
+                                >
+                                    submit
+                                </v-btn>
+                            </v-form>
+                        </v-card-text>
+                    </v-card>
+                </v-col>
             </v-row>
         </v-container>
     </v-app>
@@ -110,6 +174,8 @@
         data: {
             originFileA: null,
             originFileB: null,
+            originFilesC: null,
+            originFilesD: null,
         },
         methods: {
             submitA() {
@@ -124,9 +190,24 @@
                 axios.post('/b', formData, {responseType: 'blob'})
                     .then(this.downloadFile)
             },
+            submitC() {
+                let formData = new FormData()
+                for (let file of this.originFilesC) {
+                    formData.append("originFilesC", file)
+                }
+                axios.post('/c', formData, {responseType: 'blob'})
+                    .then(this.downloadFile)
+            },
+            submitD() {
+                let formData = new FormData()
+                for (let file of this.originFilesD) {
+                    formData.append("originFilesD", file)
+                }
+                axios.post('/d', formData, {responseType: 'blob'})
+                    .then(this.downloadFile)
+            },
             downloadFile(res) {
                 if (res.status == 200) {
-                    console.log(res)
                     let url = window.URL.createObjectURL(new Blob([res.data], {type: res.data.type}))
                     let link = document.createElement('a')
                     link.style.display = 'none'
