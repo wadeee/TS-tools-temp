@@ -1,15 +1,11 @@
 import hashlib
 import os
-import shutil
 import zipfile
 from uuid import uuid1
 
 import cv2
-import pythoncom
-from fitz import fitz
 from flask import Flask, render_template, request, send_file
 from skimage import io
-from win32com.client import Dispatch
 
 app = Flask(__name__)
 
@@ -17,132 +13,6 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     return render_template("index.html")
-
-
-@app.route('/a', methods=['POST'])
-def a():
-    a4width = 21
-    a4height = 29.7
-    a4margintopbot = 2.54
-    a4marginleftright = 3.18
-    mypath = getmypath()
-    if not os.path.exists(mypath):
-        os.makedirs(mypath)
-
-    docname = request.files.get('originFileA').filename
-    docpathname = os.path.join(mypath, docname)
-    namepre = os.path.splitext(docname)[0]
-    pdfname = namepre + ".pdf"
-    pdfpathname = os.path.join(mypath, pdfname)
-    imagepath = os.path.join(mypath, namepre)
-    zipfilename = namepre + '.zip'
-    zippath = os.path.join(mypath, 'zipfiles')
-    zippathname = os.path.join(zippath, zipfilename)
-
-    request.files.get('originFileA').save(docpathname)
-
-    pythoncom.CoInitialize()
-    word = Dispatch('Word.Application')
-    worddoc = word.Documents.Open(docpathname, ReadOnly=1)
-    worddoc.SaveAs(pdfpathname, FileFormat=17)
-    worddoc.Close()
-    os.remove(docpathname)
-
-    if os.path.exists(zippath):
-        shutil.rmtree(zippath)
-    os.makedirs(zippath)
-    if not os.path.exists(imagepath):
-        os.makedirs(imagepath)
-
-    filedoc = fitz.open(pdfpathname)
-    for pg in range(filedoc.pageCount):
-        page = filedoc[pg]
-        rotate = int(0)
-        zoom_x = 2
-        zoom_y = 2
-        mat = fitz.Matrix(zoom_x, zoom_y).preRotate(rotate)
-        rect = page.rect
-        cliptl = rect.tr * a4marginleftright / a4width + rect.bl * a4margintopbot / a4height
-        clipbr = rect.tr * (a4width - a4marginleftright) / a4width + rect.bl * (a4height - a4margintopbot) / a4height
-        clip = fitz.Rect(cliptl, clipbr)
-        pix = page.getPixmap(matrix=mat, alpha=False, clip=clip)
-
-        pix.writePNG(os.path.join(imagepath, '{}.png'.format(pg)))
-    filedoc.close()
-
-    zipimages(zippathname, imagepath)
-    shutil.rmtree(imagepath)
-    os.remove(pdfpathname)
-
-    return send_file(zippathname,
-                     mimetype='application/x-zip-compressed;charset=utf-8',
-                     attachment_filename=zipfilename,
-                     as_attachment=True)
-
-
-@app.route('/b', methods=['POST'])
-def b():
-    mypath = getmypath()
-    if not os.path.exists(mypath):
-        os.makedirs(mypath)
-    pdfname = request.files.get('originFileB').filename
-    pdfpathname = os.path.join(mypath, pdfname)
-    namepre = os.path.splitext(pdfname)[0]
-
-    imagepath = os.path.join(mypath, namepre)
-    zipfilename = namepre + '.zip'
-    zippath = os.path.join(mypath, 'zipfiles')
-    zippathname = os.path.join(zippath, zipfilename)
-
-    request.files.get('originFileB').save(pdfpathname)
-
-    if os.path.exists(zippath):
-        shutil.rmtree(zippath)
-    os.makedirs(zippath)
-    if not os.path.exists(imagepath):
-        os.makedirs(imagepath)
-
-    filedoc = fitz.open(pdfpathname)
-    for pg in range(filedoc.pageCount):
-        page = filedoc[pg]
-        rotate = int(0)
-        zoom_x = 2
-        zoom_y = 2
-        mat = fitz.Matrix(zoom_x, zoom_y).preRotate(rotate)
-        rect = page.rect
-        clip = fitz.Rect(rect.tl, rect.br)
-        pix = page.getPixmap(matrix=mat, alpha=False, clip=clip)
-
-        pix.writePNG(os.path.join(imagepath, '{}.jpg'.format(pg)))
-    filedoc.close()
-
-    zipimages(zippathname, imagepath)
-    shutil.rmtree(imagepath)
-    os.remove(pdfpathname)
-
-    return send_file(zippathname,
-                     mimetype='application/x-zip-compressed;charset=utf-8',
-                     attachment_filename=zipfilename,
-                     as_attachment=True)
-
-
-@app.route('/c', methods=['POST'])
-def c():
-    images = request.files.getlist('originFilesC')
-    mypath = getmypath()
-    imagepath = os.path.join(mypath, 'images')
-    if not os.path.exists(imagepath):
-        os.makedirs(imagepath)
-    for image in images:
-        img_re = corpmargin(io.imread(image))
-        io.imsave(os.path.join(imagepath, image.filename), img_re)
-
-    zippathname = os.path.join(mypath, 'result.zip')
-    zipimages(zippathname, imagepath)
-    return send_file(zippathname,
-                     mimetype='application/x-zip-compressed;charset=utf-8',
-                     attachment_filename='result.zip',
-                     as_attachment=True)
 
 
 @app.route('/d', methods=['POST'])
