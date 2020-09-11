@@ -10,5 +10,5 @@ systemctl enable word2img
 systemctl start word2img
 
 ## add config to nginx ##
-echo y | cp ./sscon.nginx.http.conf /etc/nginx/conf.d/
+echo y | cp ./word2img.nginx.http.conf /etc/nginx/conf.d/
 systemctl restart nginx ## please make sure nginx installed ##
