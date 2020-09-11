@@ -1,0 +1,8 @@
+[Unit]
+Description=sscon
+[Service]
+TimeoutStartSec=0
+WorkingDirectory=/root/WORD2IMG
+ExecStart=/usr/local/bin/gunicorn -b localhost:5002 app:app
+[Install]
+WantedBy=multi-user.target
